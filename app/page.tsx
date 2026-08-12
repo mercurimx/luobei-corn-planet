@@ -90,7 +90,7 @@ function Home({progress, muted, onMute, onOpenZone, onAlbum, onResult}:{progress
       <span>点击星球上的符号，去看看我从哪儿来、又会到哪儿去</span>
     </section>
     <div className="planet-wrap" aria-label="七个探索区域">
-      <img className="planet" src="assets/planet.webp" alt="漂浮在东北夜空中的玉米星球" />
+      <img className="planet" src="/assets/planet.webp" alt="漂浮在东北夜空中的玉米星球" />
       {zones.map(zone => {
         const done = progress.completed.includes(zone.id);
         return <button key={zone.id} className={`zone-pin ${done ? "done" : ""}`} style={zone.position} onClick={()=>onOpenZone(zone.id)} aria-label={`探索${zone.name}${done ? "，已完成" : ""}`}>
@@ -100,7 +100,7 @@ function Home({progress, muted, onMute, onOpenZone, onAlbum, onResult}:{progress
       })}
     </div>
     <aside className="seed-guide">
-      <img src="assets/seed.webp" alt="戴红色花布头巾的萌发玉米种子" />
+      <img src="/assets/seed.webp" alt="戴红色花布头巾的萌发玉米种子" />
       <div className="speech">{progress.completed.length === 0 ? "嘿，跟紧点儿。我的记忆散在这颗星球上啦。" : progress.completed.length < 7 ? `找回 ${progress.completed.length} 段记忆了，咱接着走！` : "七段都找齐了！来看看这一路都去了哪儿。"}</div>
     </aside>
     {progress.completed.length === 7 && <button className="result-cta" onClick={onResult}>查看我的完整旅程 <span>→</span></button>}
@@ -139,7 +139,7 @@ function ZoneScreen({zone,progress,muted,onMute,onHome,onAlbum,onUnlock}:{zone:Z
     <TopBar progress={progress} muted={muted} onMute={onMute} onHome={onHome} onAlbum={onAlbum} showBack/>
     <section className="scene-heading"><span>{zone.number}/07 · {zone.eyebrow}</span><h1>{zone.name}</h1><p>{zone.prompt}</p></section>
     <section className="interaction-panel"><SceneInteraction zone={zone} done={progress.completed.includes(zone.id)} currentDestiny={progress.destiny} onComplete={(destiny)=>onUnlock(zone.id,destiny)}/></section>
-    <div className="scene-character"><img src="assets/seed.webp" alt="小玉米"/><span>咱试试看！</span></div>
+    <div className="scene-character"><img src="/assets/seed.webp" alt="小玉米"/><span>咱试试看！</span></div>
   </main>;
 }
 
@@ -210,7 +210,7 @@ function Result({progress,onHome}:{progress:Progress;onHome:()=>void}) {
   const [poster,setPoster]=useState<string|null>(null);const [creating,setCreating]=useState(false);
   useEffect(()=>()=>{if(poster)URL.revokeObjectURL(poster)},[poster]);
   const createPoster=async()=>{setCreating(true);try{if(poster)URL.revokeObjectURL(poster);setPoster(await makeJourneyPoster(progress))}finally{setCreating(false)}};
-  return <main className="result-screen"><header className="result-hero"><button className="round-button" onClick={onHome}>←</button><p>萝北玉米星球 · 完整旅程</p><h1>从黑土地<br/>抵达人间</h1><span>一粒玉米找回了来处，也选好了去向。</span><img src="assets/seed.webp" alt="完成旅行的小玉米"/></header>
+  return <main className="result-screen"><header className="result-hero"><button className="round-button" onClick={onHome}>←</button><p>萝北玉米星球 · 完整旅程</p><h1>从黑土地<br/>抵达人间</h1><span>一粒玉米找回了来处，也选好了去向。</span><img src="/assets/seed.webp" alt="完成旅行的小玉米"/></header>
     <section className="journey"><div className="journey-line"/>{zones.map((zone,index)=>{const isDestiny=zone.id==="processing";return <article className="journey-step" key={zone.id}><div className="step-number">{zone.number}</div><div className="journey-copy"><small>{zone.eyebrow}</small><h2>{isDestiny?destiny.title:zone.cardTitle}</h2><p>{isDestiny?destiny.poetic:zone.poetic}</p></div><img src={isDestiny?destiny.card:zone.card} alt={`${zone.name}记忆卡`}/>{index<6&&<span className="down-mark">↓</span>}</article>})}</section>
     <footer className="result-footer"><span>我的最终去向</span><h2>{destiny.name}</h2><p>{destiny.quote}</p><button className="cream-button" disabled={creating} onClick={createPoster}>{creating?"正在生成长图…":"生成旅程长图"}</button><button className="text-button" onClick={onHome}>回到玉米星球</button><small>内容中的地方产业信息将在正式调研后继续核实与补充。</small></footer>
     {poster&&<div className="poster-preview" role="dialog" aria-modal="true" aria-label="旅程长图预览"><div className="poster-toolbar"><div><strong>旅程长图已生成</strong><span>手机可长按图片保存，电脑可点击下载。</span></div><button onClick={()=>setPoster(null)} aria-label="关闭长图预览">×</button></div><img src={poster} alt="萝北玉米星球完整旅程长图"/><a href={poster} download={`萝北玉米星球_${destiny.name}_旅程.png`}>下载图片</a></div>}
@@ -228,5 +228,5 @@ export default function HomePage() {
   const closeCard=()=>{const returnToDestiny=card?.id==="processing";setCard(null);setScreen(returnToDestiny?"zone":"home")};
   const toggleSound=()=>{const nextMuted=!muted;setMuted(nextMuted);if(nextMuted){audioRef.current?.pause()}else if(audioRef.current){audioRef.current.volume=.42;void audioRef.current.play().catch(()=>setMuted(true))}};
   if(!hydrated)return <main className="loading-screen"><div className="loading-seed">♧</div><p>正在唤醒玉米星球…</p></main>;
-  return <><audio ref={audioRef} src="assets/night-field.wav" loop preload="auto" aria-hidden="true"/>{screen==="home"&&<Home progress={progress} muted={muted} onMute={toggleSound} onOpenZone={openZone} onAlbum={()=>setScreen("album")} onResult={()=>setScreen("result")}/>} {screen==="zone"&&<ZoneScreen zone={activeZone} progress={progress} muted={muted} onMute={toggleSound} onHome={()=>setScreen("home")} onAlbum={()=>setScreen("album")} onUnlock={unlock}/>} {screen==="album"&&<Album progress={progress} onHome={()=>setScreen("home")} onOpenCard={setCard} onResult={()=>setScreen("result")}/>} {screen==="result"&&<Result progress={progress} onHome={()=>setScreen("home")}/>} {card&&<CardModal zone={card} destiny={progress.destiny} onClose={closeCard}/>}</>;
+  return <><audio ref={audioRef} src="/assets/night-field.wav" loop preload="auto" aria-hidden="true"/>{screen==="home"&&<Home progress={progress} muted={muted} onMute={toggleSound} onOpenZone={openZone} onAlbum={()=>setScreen("album")} onResult={()=>setScreen("result")}/>} {screen==="zone"&&<ZoneScreen zone={activeZone} progress={progress} muted={muted} onMute={toggleSound} onHome={()=>setScreen("home")} onAlbum={()=>setScreen("album")} onUnlock={unlock}/>} {screen==="album"&&<Album progress={progress} onHome={()=>setScreen("home")} onOpenCard={setCard} onResult={()=>setScreen("result")}/>} {screen==="result"&&<Result progress={progress} onHome={()=>setScreen("home")}/>} {card&&<CardModal zone={card} destiny={progress.destiny} onClose={closeCard}/>}</>;
 }

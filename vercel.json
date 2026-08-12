@@ -1,7 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm exec vite build --config vite.github.config.ts",
-  "outputDirectory": "dist-pages",
-  "framework": null,
-  "cleanUrls": true
-}
