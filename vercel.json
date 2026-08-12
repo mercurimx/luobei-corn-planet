@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm exec vite build --config vite.github.config.ts",
+  "buildCommand": "pnpm exec vite build --config vite.github.config.ts && node scripts/copy-static-assets.mjs",
   "outputDirectory": "dist-pages",
   "framework": null,
   "cleanUrls": true
